@@ -1,13 +1,13 @@
 /** User Entered Values **/
 variable "project_id" {
-    default = "banded-advice-385820"
+    default = "REPLACE_PROJECT_ID"
  }
 variable "region" {
-  default = "us-central1" /* example  - us-central1 */
+  default = "REPLACE_PROJECT_ID" /* example  - us-central1 */
 }
 variable "cluster-name" {
   type        = string
-  default     = "google-star-hkth-gke"
+  default     = "REPLACE_CLUSTER_NAME"
 }
 
 /** Application Variables **/
