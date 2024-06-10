@@ -19,10 +19,10 @@ There are two main steps:
    - **Create Local Vector Embedding Databases**: Select the desired embeddings model from the right hand view and run the indexing to create local vector indexes. This can be repeated as necessary, which will override the index.
    
 2. **Run Inferences**:
-   - **Select Local Vector Index**.
-   - **Select the LLM Pre-trained Model**.
-   - **Enter Your Question**.
-   - **Compare Results** in the 2x2 Evaluation View.
+   - Select Local Vector Index.
+   - Select the LLM Pre-trained Model.
+   - Enter Your Question.
+   - Compare Results in the 2x2 Evaluation section.
 
 # Prerequisites
 
