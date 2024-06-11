@@ -30,7 +30,6 @@ Below tools are required to be install on your computer.
 
 * [Kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 * [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-* [Helm](https://helm.sh/docs/intro/install/)
 * [Gcloud](https://cloud.google.com/sdk/docs/install)
 
 # Installation
