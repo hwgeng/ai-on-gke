@@ -49,9 +49,15 @@ cd ai-on-gke/application/rag-langchain
 
 Create an [Autopilot GKE Cluster]((https://cloud.google.com/kubernetes-engine/docs/how-to/creating-an-autopilot-cluster)) by following [these](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-an-autopilot-cluster) steps. If you already have an autopilot cluster skip this step.
 
-## 4. Modify Placeholders
+## 4. Logging in to gcloud via CLI
 
-Open **variables.tf** and update the placeholder values. Update GCP Project Id, Region and GKE Cluster Name
+```
+gcloud auth login
+```
+
+## 5. Modify Placeholders
+
+Open **variables.tf** and update the placeholder values. Update **GCP Project Id**, **Region** and **GKE Cluster Name**
 
 ```
 variable "project_id" {
