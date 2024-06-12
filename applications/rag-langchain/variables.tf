@@ -1,13 +1,13 @@
 /** User Entered Values **/
 variable "project_id" {
-    default = "REPLACE_PROJECT_ID"
+    default = "banded-advice-385820"
  }
 variable "region" {
-  default = "REPLACE_PROJECT_ID" /* example  - us-central1 */
+  default = "us-central1" /* example  - us-central1 */
 }
-variable "cluster-name" {
+variable "cluster_name" {
   type        = string
-  default     = "REPLACE_CLUSTER_NAME"
+  default     = "google-star-hkth-gke"
 }
 
 /** Application Variables **/
@@ -17,21 +17,21 @@ variable "secret_google_api_key" {
   default = "GOOGLE_API_KEY"
   type = string
 }
-variable "secret_google_api_value" {
+variable "GOOGLE_API_KEY_VALUE" {
   sensitive   = true
 }
 variable "secret_openapi_api_key" {
   default = "OPENAI_API_KEY"
   type = string
 }
-variable "secret_openapi_api_value" {
+variable "OPENAI_API_KEY_VALUE" {
   sensitive   = true
 }
 variable "secret_hf_api_key" {
   default = "HUGGINFACEHUB_API_TOKEN"
   type = string
 }
-variable "secret_hf_api_value" {
+variable "HUGGINFACEHUB_API_TOKEN_VALUE" {
   sensitive   = true
 }
 variable "namespace" {

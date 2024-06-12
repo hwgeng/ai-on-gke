@@ -16,11 +16,20 @@ data "google_project" "project" {
 }
 
 # Retrieve an access token as the Terraform runner.
-data "google_client_config" "provider" {}
+data "google_client_config" "provider" {
+  provider = google
+}
+
+/* resource "google_service_account" "service_account" {
+  account_id   = "gke-rag-langchain-svc-accnt"
+  display_name = "gke rag langchain svc account"
+  project = var.project_id
+}
+ */
 
 # Point to the created cluster.
 data "google_container_cluster" "my_cluster" {
-  name     = var.cluster-name
+  name     = var.cluster_name
   location = var.region
   project  = var.project_id
 }
@@ -51,7 +60,7 @@ resource "kubernetes_secret" "secret_google_api" {
     }
   }
   data = {
-    "${var.secret_google_api_key}" = var.secret_google_api_value
+    "${var.secret_google_api_key}" = var.GOOGLE_API_KEY_VALUE
   }
 }
 resource "kubernetes_secret" "secret_openapi_api" {
@@ -64,7 +73,7 @@ resource "kubernetes_secret" "secret_openapi_api" {
     }
   }
   data = {
-    "${var.secret_openapi_api_key}" = var.secret_openapi_api_value
+    "${var.secret_openapi_api_key}" = var.OPENAI_API_KEY_VALUE
   }
 }
 resource "kubernetes_secret" "secret_hf_api" {
@@ -77,7 +86,7 @@ resource "kubernetes_secret" "secret_hf_api" {
     }
   }
   data = {
-    "${var.secret_hf_api_key}" = var.secret_hf_api_value
+    "${var.secret_hf_api_key}" = var.HUGGINFACEHUB_API_TOKEN_VALUE
   }
 }
 
@@ -168,6 +177,12 @@ resource "kubernetes_deployment" "gke_rag_langchain_workload" {
   }
 }
 
+resource "google_compute_address" "gke-static-ip-address" {
+  name = "gke-static-ip-address"
+  project = var.project_id
+  region = var.region
+}
+
 /* Exposing the workload as a Service. */
 resource "kubernetes_service" "gke_rag_langchain_service" {
 
@@ -186,7 +201,7 @@ resource "kubernetes_service" "gke_rag_langchain_service" {
     }
 
     type             = "LoadBalancer"
-    load_balancer_ip = "34.160.196.7"
-
+    load_balancer_ip = "${google_compute_address.gke-static-ip-address.address}"
+    
   }
 }

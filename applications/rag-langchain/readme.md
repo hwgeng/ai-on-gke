@@ -49,15 +49,9 @@ cd ai-on-gke/application/rag-langchain
 
 Create an [Autopilot GKE Cluster]((https://cloud.google.com/kubernetes-engine/docs/how-to/creating-an-autopilot-cluster)) by following [these](https://cloud.google.com/kubernetes-engine/docs/how-to/creating-an-autopilot-cluster) steps. If you already have an autopilot cluster skip this step.
 
-## 4. Logging in to gcloud via CLI
+## 4. Modify Placeholders
 
-```
-gcloud auth login
-```
-
-## 5. Modify Placeholders
-
-Open **variables.tf** and update the placeholder values. Update **GCP Project Id**, **Region** and **GKE Cluster Name**
+Open **variables.tf** and update the placeholder values. Update GCP Project Id, Region and GKE Cluster Name
 
 ```
 variable "project_id" {
@@ -66,13 +60,13 @@ variable "project_id" {
 variable "region" {
   default = "YOUR_REGION" /* example: "us-central1" */
 }
-variable "cluster-name" {
+variable "cluster_name" {
   type        = string
   default     = "YOUR_GKE_CLUSTER"
 }
 ```
 
-## 5. Get Application keys
+## 5. Get Application keys from OpenAI, HuggingFace and GoogleAI
 
 * [OpenAI keys](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key)
 * [GoogleAI Keys](https://aistudio.google.com/app/apikey)
@@ -83,29 +77,40 @@ variable "cluster-name" {
 
 ```
 $ terraform init
+  
+    ``Terraform has been successfully initialized!``
 
 $ terraform validate
 
-$ terraform apply
+    ``Success! The configuration is valid.``
+
+$ terraform --version
+
+    ``
+    Terraform v1.5.7
+    on darwin_arm64
+    + provider registry.terraform.io/gavinbunney/kubectl v1.14.0
+    + provider registry.terraform.io/hashicorp/google v5.32.0
+    + provider registry.terraform.io/hashicorp/google-beta v5.32.0
+    + provider registry.terraform.io/hashicorp/helm v2.8.0
+    + provider registry.terraform.io/hashicorp/kubernetes v2.18.1
+    + provider registry.terraform.io/hashicorp/time v0.11.1
+    ``
+
+$ TF_VAR_GOOGLE_API_KEY_VALUE="REPLACE_KEY" TF_VAR_HUGGINFACEHUB_API_TOKEN_VALUE="REPLACE_KEY" TF_VAR_OPENAI_API_KEY_VALUE="REPLACE_KEY" terraform apply
+
 ```
-## 6. Enter your LLM Keys
 
-Terraform apply will prompt you to enter the keys as shown below:
+## 8. Undo the Installation
+To remove the created resources from the above step, run below:
 
 ```
-$ terraform apply
-
-var.secret_google_api_value
-  Enter a value: 
-
-var.secret_hf_api_value
-  Enter a value: 
-
-var.secret_openapi_api_value
-  Enter a value: 
+$ TF_VAR_GOOGLE_API_KEY_VALUE="REPLACE_KEY" TF_VAR_HUGGINFACEHUB_API_TOKEN_VALUE="REPLACE_KEY" TF_VAR_OPENAI_API_KEY_VALUE="REPLACE_KEY" terraform destroy
 ```
 
-Currently dashboard supports 4 Vector Index Embeddings Models (from 3 vendords - OpenAI, Google and Huggingface) namely,
+## 7. Embeddings Models Supported
+
+Currently dashboard supports 4 Vector Index Embeddings Models (from 3 vendors - OpenAI, Google and Huggingface) namely,
 
 * OpenAIEmbeddings
   ```
@@ -131,7 +136,7 @@ Currently dashboard supports 4 Vector Index Embeddings Models (from 3 vendords -
                     )
   ```
 
-Applications creates a local vector indexes in the container using Chroma
+Applications creates a local vector indexes in the container using Chroma.
 
 ```
 from langchain_community.vectorstores import Chroma
