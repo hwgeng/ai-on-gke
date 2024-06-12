@@ -20,13 +20,6 @@ data "google_client_config" "provider" {
   provider = google
 }
 
-/* resource "google_service_account" "service_account" {
-  account_id   = "gke-rag-langchain-svc-accnt"
-  display_name = "gke rag langchain svc account"
-  project = var.project_id
-}
- */
-
 # Point to the created cluster.
 data "google_container_cluster" "my_cluster" {
   name     = var.cluster_name
@@ -52,7 +45,7 @@ provider "kubectl" {
 /** Creating Secrets to initialize the various Supported LLMs. **/
 resource "kubernetes_secret" "secret_google_api" {
   metadata {
-    name      = "secret-google-api"
+    name = "secret-google-api"
     #namespace = var.namespace
     labels = {
       "sensitive" = "true"
@@ -65,7 +58,7 @@ resource "kubernetes_secret" "secret_google_api" {
 }
 resource "kubernetes_secret" "secret_openapi_api" {
   metadata {
-    name      = "secret-openapi-api"
+    name = "secret-openapi-api"
     #namespace = var.namespace
     labels = {
       "sensitive" = "true"
@@ -78,7 +71,7 @@ resource "kubernetes_secret" "secret_openapi_api" {
 }
 resource "kubernetes_secret" "secret_hf_api" {
   metadata {
-    name      = "secret-hf-api"
+    name = "secret-hf-api"
     #namespace = var.namespace
     labels = {
       "sensitive" = "true"
@@ -90,11 +83,48 @@ resource "kubernetes_secret" "secret_hf_api" {
   }
 }
 
+resource "google_compute_address" "gke-static-ip-address" {
+  name    = "gke-static-ip-address"
+  project = var.project_id
+  region  = var.region
+}
+
+/* Exposing the workload as a Service. */
+resource "kubernetes_service" "gke_rag_langchain_service" {
+
+  metadata {
+    name = "rag-langchain-application-service"
+    #namespace = var.namespace
+  }
+  spec {
+    selector = {
+      app = var.gke_workload_name
+    }
+
+    port {
+      port        = 80
+      target_port = 80
+    }
+
+    type             = "NodePort"
+    load_balancer_ip = google_compute_address.gke-static-ip-address.address
+
+  }
+
+  lifecycle {
+    ignore_changes = [
+      metadata[0].annotations,
+    ]
+  }
+
+  #depends_on = [time_sleep.wait_service_cleanup]
+}
+
 /* deploying the image as a GKE Workload. */
 resource "kubernetes_deployment" "gke_rag_langchain_workload" {
 
   metadata {
-    name      = var.gke_workload_name
+    name = var.gke_workload_name
     #namespace = var.namespace
   }
 
@@ -169,39 +199,10 @@ resource "kubernetes_deployment" "gke_rag_langchain_workload" {
               ephemeral-storage = "1Gi"
             }
           }
-
+          
         }
 
       }
     }
-  }
-}
-
-resource "google_compute_address" "gke-static-ip-address" {
-  name = "gke-static-ip-address"
-  project = var.project_id
-  region = var.region
-}
-
-/* Exposing the workload as a Service. */
-resource "kubernetes_service" "gke_rag_langchain_service" {
-
-  metadata {
-    name      = "rag-langchain-application-service"
-    #namespace = var.namespace
-  }
-  spec {
-    selector = {
-      app = var.gke_workload_name
-    }
-
-    port {
-      port        = 80
-      target_port = 80
-    }
-
-    type             = "LoadBalancer"
-    load_balancer_ip = "${google_compute_address.gke-static-ip-address.address}"
-    
   }
 }
